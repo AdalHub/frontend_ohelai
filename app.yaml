@@ -1,0 +1,24 @@
+runtime: nodejs18  # Use the latest supported LTS version
+service: reactservice
+env: standard
+instance_class: F4
+
+
+
+automatic_scaling:
+  min_idle_instances: automatic
+  max_idle_instances: automatic
+  min_pending_latency: automatic
+  max_pending_latency: automatic
+
+handlers:
+- url: /static
+  static_dir: build/static
+
+- url: /(.*\.(json|ico|js|png|jpg|css|txt|svg|woff|woff2|ttf|map))$
+  static_files: build/\1
+  upload: build/.*\.(json|ico|js|png|jpg|css|txt|svg|woff|woff2|ttf|map)$
+
+- url: /.*
+  static_files: build/index.html
+  upload: build/index.html

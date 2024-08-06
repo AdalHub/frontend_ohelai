@@ -1,0 +1,3 @@
+dispatch:
+  - url: "www.ohel.ai/*"
+    service: reactservice

@@ -1,0 +1,335 @@
+/* chatbotPage.css */
+
+.chatbot-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.drawer-chat-container {
+  flex-grow: 1;
+  display: flex;
+  position: relative;
+}
+
+.side-drawer {
+  width: 250px;
+  height: 100%;
+  background-color: #fcfcff;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(-250px);
+  position: fixed;
+  top: 0;
+  z-index: 2;
+}
+
+.side-drawer.open {
+  transform: translateX(0);
+}
+
+.chat-area-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 250px; /* Space for the side drawer */
+}
+
+/* Adjustment for when the side drawer is not open */
+.drawer-chat-container .side-drawer:not(.open) ~ .chat-area-container {
+  margin-left: 0;
+}
+
+.messages-container {
+  overflow-y: auto;
+  flex-grow: 1;
+  background: #ffffff; /* White background like input area */
+  border: 2px solid #e0e0e0; /* Border like input area */
+  border-radius: 15px; /* Rounded corners like input area */
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  margin: 10px;
+  padding: 10px;
+}
+
+.message {
+  white-space: pre-wrap; /* Allows text to wrap and preserves line breaks */
+  word-wrap: break-word; /* Ensures long words do not overflow */
+}
+
+
+.toggle-btn {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 3;
+  background-color: #ffffff;
+  color:#000000;
+  border: none;
+  padding: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: left 0.3s ease-in-out;
+}
+
+.button-shift {
+  left: 250px; /* Shift the button to the right when the drawer is open */
+}
+
+.input-area textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 50px;
+  overflow-y: hidden;
+  border: none;
+  border-radius: 15px;
+  padding: 10px 15px;
+  font-size: 15px;
+  margin-right: 10px;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  resize: none;
+  line-height: 1.5;
+  height: calc(1em * 1.5);
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.input-area {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 5px;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  margin-top: 2px;
+  margin-left: 8px;
+  margin-right: 8px;
+  border: 2px solid #afafaf;
+}
+
+.input-area input::placeholder {
+  color: #a0a0a0;
+}
+
+.send-btn { /* this is the actual user message that pops up*/
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000000;
+}
+
+.send-btn:hover {
+  background-color: #c9c9c9;
+}
+
+.send-btn .fa-paper-plane {
+  font-size: 1.5em;
+}
+
+
+.drawer-title {
+  padding: 10px;
+  margin-bottom: 10px; 
+  border: 2px solid #f9f9f9; 
+  background-color: #f9f9f9; 
+  font-size: 16px; 
+  text-align: center; 
+}
+
+.drawer-title {
+  font-weight: bold;
+  position: relative; 
+}
+
+.add-session-btn {
+  font-size: 20px;
+  position: absolute;
+  right: 10px; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+  border: none; /* Remove border */
+  background-color: transparent; /* Transparent background */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.chat-sessions {
+  margin-top: 10px; /* Space between title and sessions list */
+}
+
+.chat-session {
+  padding: 10px 15px;
+  border: 3px solid #e0e0e0;
+  margin: 5px 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 4px 0 #ffffff1a;
+  transition: background-color 0.3s;
+}
+
+.chat-session:hover {
+  background-color: #a5a5a5;
+  box-shadow: 0 6px 12px #78787826; /* Slightly stronger shadow on hover */
+
+}
+
+.chat-session.active { /*this is the actual chats buttons 1597c0*/
+  border-color: #d2d2d2;
+  background-color: #d2d2d2;
+}
+
+.delete-session-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 50%;
+}
+
+.delete-session-btn:hover {
+  background-color: transparent;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.delete-session-btn .fa-trash {
+  color: rgb(0, 0, 0); /* Red color */
+}
+
+.delete-session-btn:hover .fa-trash {
+  color: darkred; /* Darker red on hover */
+}
+
+.message {
+  flex: 1; 
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.message-bubble {
+  display: flex;
+  align-items: center;
+  max-width: 80%; /* Limit the width of the bubble */
+  border-radius: 20px; /* Round the corners */
+  padding: 10px; /* Add some padding inside the bubble */
+  margin-bottom: 10px; /* Space between messages */
+  margin-right: auto; /* Align bubbles to the left by default */
+  margin-left: 10px; /* Space from the left edge */
+  position: relative; /* For positioning the tail if you want */
+}
+
+/* Styles for user messages */
+.message-bubble.user {
+  background-color: #009DF8; /* Light blue background for user messages */
+  color: #ffffff;
+  text-align: left; /* Align user messages to the left */
+}
+
+/* Styles for bot messages */
+.message-bubble.bot {
+  background-color: #f8f8f8; /* Light grey background for bot messages */
+  align-items: center;  /* Align bot messages to the center */
+  color: #000000;
+}
+
+.message.user {
+  background-color: #009DF8; /* Light blue background for user messages */
+  color: #ffffff; /* Text color for user messages */
+  align-self: flex-end; /* Align user messages to the right */
+  /* Other styles remain unchanged */
+}
+
+/* Styles for bot messages */
+.message.bot {
+  background-color: #F1FBFF; /* Light pink background for bot messages */
+  color: #000000; /* Text color for bot messages */
+  align-self: flex-start; 
+  /* Other styles remain unchanged */
+}
+
+.bot-icon {
+  width: 30px; /* Set a fixed width for the logo image */
+  height: 30px; /* Set a fixed height for the logo image */
+  margin-right: 10px; /* Adds some space between the logo image and the text */
+  border-radius: 50%; /* Makes the logo round */
+  object-fit: cover; /* Ensures the image covers the area, useful if your image is not square */
+}
+
+.user-icon {
+  width: 30px; /* Set a fixed width for the logo image */
+  height: 30px; /* Set a fixed height for the logo image */
+  margin-right: 10px; /* Adds some space between the logo image and the text */
+  border-radius: 50%; /* Makes the logo round */
+  object-fit: cover;
+  color:#009DF8;
+}
+
+.chat-title {
+  font-size: 24px; /* Choose a font size that fits your design */
+  color: #333; /* Choose a text color that fits your design */
+  text-align: center; /* Center the title if you like */
+  margin-top: 20px; /* Add some space above the title */
+  margin-bottom: 20px; /* Add some space below the title before the messages start */
+}
+
+.message-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.message-row .icon-spacing {
+  margin-right: 10px;
+}
+
+.message-bubble {
+  max-width: 80%;
+  border-radius: 20px;
+  padding: 10px;
+  flex-grow: 1; /* Added to ensure that the message bubble takes up the remaining space */
+}
+
+/* Unified styles for icons */
+.bot-icon, .user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.icon-spacing {
+  margin-right: 10px;
+}
+
+.user .icon-spacing {
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+/*change font family*/
+.input-area textarea, .message {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+/*loading spineer */
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 24px;
+  color: #555;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}

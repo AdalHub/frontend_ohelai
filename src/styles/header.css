@@ -1,0 +1,75 @@
+/* header.css */
+
+.top-nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: #ffffff; /* White background for the top navigation */
+}
+
+.logo {
+  font-size: 1.5rem;
+  color: #333333; /* Dark color for the logo for readability */
+  font-weight: bold;
+  cursor: pointer; /* Changes the cursor to a pointer when hovering over the logo */
+  display: flex; /* Ensures the logo text and image are aligned */
+  align-items: center; /* Aligns the logo image and text vertically */
+}
+
+.logo img {
+  max-height: 60px; /* Maximum height for the logo image */
+  max-width: 60px; /* Maximum width for the logo image */
+  margin-right: 15px; /* Adds some space between the logo image and the text */
+  border-radius: 50%;
+}
+
+.nav-links {
+  margin-left: auto;
+}
+
+/* Navigation Links */
+.nav-link {
+  color: #ffffff; /* White color for navigation links */
+  text-decoration: none;
+  padding: 10px 20px; /* Increased padding for a more prominent button */
+  background-color: #036C9C;
+  font-size: 1rem;
+  border-radius: 10px; /* Slightly rounded corners */
+  margin-right: 15px; /* Adjusted margin to space out the buttons */
+  box-shadow: 0 5px #014564, 0 10px 20px rgba(0, 0, 0, 0.2); /* 3D effect with shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for transform and shadow */
+}
+
+.nav-link:last-child {
+  margin-right: 0; /* Remove margin from the last navigation link */
+}
+
+.nav-link:hover, .nav-link:focus {
+  color: #ffffff; /* White text on hover */
+  background-color: #014564; /* Darker blue background for hover effect */
+  transform: translateY(-3px); /* Move the button up slightly */
+  box-shadow: 0 8px #014564, 0 15px 30px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover/focus */
+}
+
+/* Logout Button */
+.logout-btn {
+  background-color: #036C9C; /* Green background for the logout button */
+  color: #ffffff; /* White text for logout button */
+  border: none;
+  padding: 10px 20px; /* Increased padding for a more prominent button */
+  cursor: pointer;
+  border-radius: 10px; /* Slightly rounded corners */
+  font-size: 1rem;
+  margin-left: 15px; /* Add margin to the left of the logout button */
+  box-shadow: 0 5px #014564, 0 10px 20px rgba(0, 0, 0, 0.2); /* 3D effect with shadow */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for transform and shadow */
+}
+
+.logout-btn:hover, .logout-btn:focus {
+  background-color: #014564;
+  color: #ffffff;
+  transform: translateY(-3px); /* Move the button up slightly */
+  box-shadow: 0 8px #014564, 0 15px 30px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover/focus */
+}

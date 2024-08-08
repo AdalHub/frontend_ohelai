@@ -56,17 +56,30 @@ function ChatbotPage() {
         }
   
         const data = await response.json();
-        const botResponse = { id: Date.now(), text: data.response, sender: 'bot' };
+
+
+
+
+
+
+        if (data.response) {
+          const botResponse = { id: Date.now(), text: data.response, sender: 'bot' };
+          addMessageToSession(botResponse);
+        }
   
-        // Then, add the bot's response to the session
-        setSessions(currentSessions => {
-          const newSessions = [...currentSessions];
-          if (!newSessions[activeSessionIndex].messages.find(msg => msg.id === botResponse.id)) {
-            newSessions[activeSessionIndex].messages.push(botResponse);
+        // Iterate through each additional key in the response
+        Object.keys(data).forEach(key => {
+          if (key !== 'response') {
+            const toolResponses = formatToolResponse(data[key], key);
+            toolResponses.forEach(msg => addMessageToSession(msg));
           }
-          return newSessions;
         });
-  
+
+
+
+
+
+    
       } catch (error) {
         console.error('Error:', error);
         // Handle error by adding an error message or similar
@@ -126,7 +139,58 @@ function ChatbotPage() {
     }
   };
 
+
+
+
+
+
+
+
+  const addMessageToSession = (message) => {
+    setSessions(currentSessions => {
+      const newSessions = [...currentSessions];
+      if (!newSessions[activeSessionIndex].messages.find(msg => msg.id === message.id)) {
+        newSessions[activeSessionIndex].messages.push(message);
+      }
+      return newSessions;
+    });
+  };
+  
+  
+  const formatToolResponse = (toolData, toolKey) => {
+    // Assume toolData is an array of objects or a single object
+    if (Array.isArray(toolData)) {
+      return toolData.map(item => ({
+        id: Date.now() + Math.random(), // ensure unique ID
+        text: formatMessage(item, toolKey),
+        sender: 'bot'
+      }));
+    } else {
+      return [{
+        id: Date.now(),
+        text: formatMessage(toolData, toolKey),
+        sender: 'bot'
+      }];
+    }
+  };
+  
+  const formatMessage = (item, toolKey) => {
+    switch (toolKey) {
+      case 'tavily_search':
+      case 'elasticsearch_lookup':
+        return `Title: ${item.title}\nDescription: ${item.description}\nPrice: ${item.price}\nURL: ${item.url}\n[![Image](${item.image})]`; // Adjust the format as per your need
+      default:
+        return item; // If the item is a string or similar
+    }
+  };
+  
+
+
+
+
+
   const typingIntervalRef = useRef(null);
+
 
   useEffect(() => {
     const fetchChatHistory = async () => {
@@ -236,7 +300,7 @@ function ChatbotPage() {
                   <FaUserCircle className="user-icon icon-spacing" />
                 )}
                 <div className={`message-bubble ${message.sender}`}>
-                  <div className="message">{message.text}</div>
+                  <div className="message" dangerouslySetInnerHTML={{ __html: message.text }}></div>
                 </div>
               </div>
             ))}
@@ -246,6 +310,7 @@ function ChatbotPage() {
               </div>
             )}
           </div>
+
           <div className="input-area">
             <textarea
               value={userInput}

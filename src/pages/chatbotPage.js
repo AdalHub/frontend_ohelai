@@ -69,12 +69,16 @@ function ChatbotPage() {
         }
   
         // Iterate through each additional key in the response
+        // Iterate through each additional key in the response
         Object.keys(data).forEach(key => {
           if (key !== 'response') {
-            const toolResponses = formatToolResponse(data[key], key);
+            const rawData = data[key].output; // Assuming output holds the raw data
+            const parsedData = safeJsonParse(rawData); // Parse JSON data from string
+            const toolResponses = formatToolResponse(parsedData, key);
             toolResponses.forEach(msg => addMessageToSession(msg));
           }
         });
+
 
 
 
@@ -175,22 +179,36 @@ function ChatbotPage() {
     }
   };
   
-  const formatMessage = (item, toolKey) => {
-    switch (toolKey) {
-      case 'tavily_search':
-      case 'elasticsearch_lookup':
-        // Safely access each property, defaulting to 'Not available' if undefined
-        const title = item.title || 'Not available';
-        const description = item.description || 'Not available';
-        const price = item.price || 'Not available';
-        const url = item.url || '#'; // Use a placeholder if URL is missing
-        const image = item.image ? `[![Image](${item.image})]` : '[Image not available]';
-  
-        return `Title: ${title}\nDescription: ${description}\nPrice: ${price}\nURL: [View Here](${url})\n${image}`;
-      default:
-        return item; // If the item is a string or similar
-    }
-  };
+// Helper function to safely parse JSON
+const safeJsonParse = (str) => {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    console.error('Failed to parse JSON:', e);
+    return null;
+  }
+};
+
+// Updated formatting function that handles different response types
+const formatMessage = (item, toolKey) => {
+  if (typeof item === 'string') {
+    // Assume it's a JSON string for tavily_search or a regular string for others
+    item = safeJsonParse(item);
+    if (!item) return 'Error: Invalid data format'; // Handle parsing errors
+  }
+
+  switch (toolKey) {
+    case 'tavily_search':
+      // Handle array of objects (assuming item is now an array)
+      return item.map(product => `Title: ${product.title || 'N/A'}\nDescription: ${product.description || 'N/A'}`).join('\n');
+    case 'elasticsearch_lookup':
+      // Extract and format if item is already a proper object
+      return `Title: ${item.title || 'N/A'}\nDescription: ${item.description || 'N/A'}\nPrice: ${item.price || 'N/A'}\nURL: [View Here](${item.url || '#'})`;
+    default:
+      return item; // Default text handling
+  }
+};
+
   
 
 

@@ -56,6 +56,7 @@ function ChatbotPage() {
         }
   
         const data = await response.json();
+        console.log('API response:', data); // Log to inspect the structure
 
 
 
@@ -178,7 +179,14 @@ function ChatbotPage() {
     switch (toolKey) {
       case 'tavily_search':
       case 'elasticsearch_lookup':
-        return `Title: ${item.title}\nDescription: ${item.description}\nPrice: ${item.price}\nURL: ${item.url}\n[![Image](${item.image})]`; // Adjust the format as per your need
+        // Safely access each property, defaulting to 'Not available' if undefined
+        const title = item.title || 'Not available';
+        const description = item.description || 'Not available';
+        const price = item.price || 'Not available';
+        const url = item.url || '#'; // Use a placeholder if URL is missing
+        const image = item.image ? `[![Image](${item.image})]` : '[Image not available]';
+  
+        return `Title: ${title}\nDescription: ${description}\nPrice: ${price}\nURL: [View Here](${url})\n${image}`;
       default:
         return item; // If the item is a string or similar
     }

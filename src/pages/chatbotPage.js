@@ -68,16 +68,34 @@ function ChatbotPage() {
           addMessageToSession(botResponse);
         }
   
-        // Iterate through each additional key in the response
+
         // Iterate through each additional key in the response
         Object.keys(data).forEach(key => {
           if (key !== 'response') {
-            const rawData = data[key].output; // Assuming output holds the raw data
-            const parsedData = safeJsonParse(rawData); // Parse JSON data from string
-            const toolResponses = formatToolResponse(parsedData, key);
-            toolResponses.forEach(msg => addMessageToSession(msg));
+              let parsedData;
+              if (key === 'elasticsearch_lookup') {
+                  // Use the special unescape and parse function for elasticsearch data
+                  parsedData = unescapeAndParse(data[key].output);
+              } else {
+                  // Assuming other outputs are regular JSON arrays
+                  parsedData = safeJsonParse(data[key].output);
+              }
+              
+              if (parsedData && Array.isArray(parsedData)) {
+                  const toolResponses = formatToolResponse(parsedData, key);
+                  toolResponses.forEach(msg => addMessageToSession(msg));
+              } else {
+                  console.error('Expected an array after parsing:', parsedData);
+                  // Handle cases where parsedData is not an array or is null
+                  addMessageToSession({
+                      id: Date.now(),
+                      text: 'Failed to retrieve valid data',
+                      sender: 'bot'
+                  });
+              }
           }
-        });
+      });
+  
 
 
 
@@ -163,21 +181,17 @@ function ChatbotPage() {
   
   
   const formatToolResponse = (toolData, toolKey) => {
-    // Assume toolData is an array of objects or a single object
-    if (Array.isArray(toolData)) {
-      return toolData.map(item => ({
-        id: Date.now() + Math.random(), // ensure unique ID
+    return toolData.map(item => ({
+        id: Date.now() + Math.random(), // Ensure unique ID
         text: formatMessage(item, toolKey),
         sender: 'bot'
-      }));
-    } else {
-      return [{
-        id: Date.now(),
-        text: formatMessage(toolData, toolKey),
-        sender: 'bot'
-      }];
-    }
-  };
+    }));
+};
+
+const formatMessage = (item, toolKey) => {
+    // Here, make sure to access properties in a null-safe manner
+    return `Title: ${item?.title || 'N/A'}\nDescription: ${item?.description || 'N/A'}\nPrice: ${item?.price || 'N/A'}\nURL: [View Here](${item?.url || '#'})\nImage: [![Image](${item?.image || 'Image not available'})]`;
+};
   
 // Helper function to safely parse JSON
 const safeJsonParse = (str) => {
@@ -188,26 +202,19 @@ const safeJsonParse = (str) => {
     return null;
   }
 };
-
-// Updated formatting function that handles different response types
-const formatMessage = (item, toolKey) => {
-  if (typeof item === 'string') {
-    // Assume it's a JSON string for tavily_search or a regular string for others
-    item = safeJsonParse(item);
-    if (!item) return 'Error: Invalid data format'; // Handle parsing errors
+// A helper function to unescape and parse JSON strings safely
+function unescapeAndParse(jsonString) {
+  try {
+      // Unescape by removing additional slashes and outer quotes
+      const unescapedString = jsonString.replace(/^"|"$/g, '').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+      return JSON.parse(unescapedString);
+  } catch (error) {
+      console.error('Error parsing JSON:', error, 'from string:', jsonString);
+      return null;
   }
+}
 
-  switch (toolKey) {
-    case 'tavily_search':
-      // Handle array of objects (assuming item is now an array)
-      return item.map(product => `Title: ${product.title || 'N/A'}\nDescription: ${product.description || 'N/A'}`).join('\n');
-    case 'elasticsearch_lookup':
-      // Extract and format if item is already a proper object
-      return `Title: ${item.title || 'N/A'}\nDescription: ${item.description || 'N/A'}\nPrice: ${item.price || 'N/A'}\nURL: [View Here](${item.url || '#'})`;
-    default:
-      return item; // Default text handling
-  }
-};
+
 
   
 

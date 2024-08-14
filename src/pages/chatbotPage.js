@@ -75,7 +75,7 @@ function ChatbotPage() {
               let parsedData;
               if (key === 'elasticsearch_lookup') {
                   // Use the special unescape and parse function for elasticsearch data
-                  parsedData = unescapeAndParse(data[key].output);
+                  parsedData = unescapeAndParse(data[key].output)
               } else {
                   // Assuming other outputs are regular JSON arrays
                   parsedData = safeJsonParse(data[key].output);
@@ -83,6 +83,7 @@ function ChatbotPage() {
               
               if (parsedData && Array.isArray(parsedData)) {
                   const toolResponses = formatToolResponse(parsedData, key);
+                  
                   toolResponses.forEach(msg => addMessageToSession(msg));
               } else {
                   console.error('Expected an array after parsing:', parsedData);
@@ -205,13 +206,17 @@ const safeJsonParse = (str) => {
 // A helper function to unescape and parse JSON strings safely
 function unescapeAndParse(jsonString) {
   try {
-      // Unescape by removing additional slashes and outer quotes
-      const unescapedString = jsonString.replace(/^"|"$/g, '').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-      return JSON.parse(unescapedString);
-  } catch (error) {
-      console.error('Error parsing JSON:', error, 'from string:', jsonString);
-      return null;
-  }
+    console.log("Original JSON String:", jsonString);
+    const unescapedString = jsonString.replace(/\\\\/g, '\\');
+    console.log("Unescaped JSON String:", unescapedString);
+    const parsedData = JSON.parse(unescapedString);
+    console.log("Parsed Data:", parsedData);
+    return parsedData;
+} catch (error) {
+    console.error('Error parsing JSON:', error, 'from string:', jsonString);
+    return null;
+}
+
 }
 
 

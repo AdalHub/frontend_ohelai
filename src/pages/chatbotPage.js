@@ -191,9 +191,8 @@ function ChatbotPage() {
 
 const formatMessage = (item, toolKey) => {
     // Here, make sure to access properties in a null-safe manner
-    return `Title: ${item?.title || 'N/A'}\nDescription: ${item?.description || 'N/A'}\nPrice: ${item?.price || 'N/A'}\nURL: [View Here](${item?.url || '#'})\nImage: [![Image](${item?.image || 'Image not available'})]`;
-};
-  
+    return `Title: ${item?.title || 'N/A'}\nDescription: ${item?.description || 'N/A'}\nPrice: ${item?.price || 'N/A'}\nURL: <a href="${item?.url || '#'}" target="_blank">View Here</a>\nImage: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
+  };
 // Helper function to safely parse JSON
 const safeJsonParse = (str) => {
   try {

@@ -34,7 +34,7 @@ function ChatbotPage() {
         if (!newSessions[activeSessionIndex].messages.find(msg => msg.id === userMessage.id)) {
           const newMessages = [...newSessions[activeSessionIndex].messages, userMessage];
           newSessions[activeSessionIndex] = { ...newSessions[activeSessionIndex], messages: newMessages };
-        }
+        }//add the opposite of this if saying sorry message repeat
         return newSessions;
       });
   
@@ -144,7 +144,7 @@ function ChatbotPage() {
       }
       const updatedSessions = sessions.filter(session => session.id !== sessionIdToDelete);
       setSessions(updatedSessions);
-      if (activeSessionIndex === sessionIndex) {
+      if (activeSessionIndex === sessionIndex) {//if your deleteing the chat that your currently on
         setActiveSessionIndex(updatedSessions.length > 0 ? 0 : -1);
       }
     } catch (error) {
@@ -228,9 +228,17 @@ function unescapeAndParse(jsonString) {
 
   const typingIntervalRef = useRef(null);
 
-
   useEffect(() => {
+    console.log("Using react effects");
     const fetchChatHistory = async () => {
+      console.log("fetching chat history");
+      if (!userEmail) {
+        console.log("No user email available yet.");//ensures user email is availabel
+        setTimeout(fetchChatHistory, 1000); // Retry after 1 second
+        return;
+      }  
+      console.log("Attempting to fetch history with email:", userEmail);
+
       try {
         const response = await fetch('https://api.ohel.ai/history', {
           method: 'POST',
@@ -239,11 +247,13 @@ function unescapeAndParse(jsonString) {
           },
           body: JSON.stringify({ email: userEmail }),
         });
+        console.log("Response status:", response.status);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+  
         const data = await response.json();
-        
+        console.log("Fetched data:", data);
         const sessionsFromHistory = data.reduce((acc, chat) => {
           const sessionIndex = chat.chatsession;
           if (!acc[sessionIndex]) {
@@ -256,10 +266,14 @@ function unescapeAndParse(jsonString) {
           acc[sessionIndex].messages.push({ text: chat.assistant, sender: 'bot' });
           return acc;
         }, {});
-
+  
         const sessionsArray = Object.keys(sessionsFromHistory).map(key => sessionsFromHistory[key]);
-        setSessions(sessionsArray);
-
+  
+        // Synchronously update sessions and active session index
+        await new Promise(resolve => {
+          setSessions(sessionsArray, () => resolve());
+        });
+  
         const activeSessionIndexFromHistory = data.findIndex(chat => chat.chatsession === '0');
         setActiveSessionIndex(activeSessionIndexFromHistory !== -1 ? activeSessionIndexFromHistory : 0);
       } catch (error) {
@@ -267,8 +281,8 @@ function unescapeAndParse(jsonString) {
       }
     };
     fetchChatHistory();
-  }, [userEmail]);
-
+  }, [userEmail]); // Ensure useEffect runs when userEmail changes
+  
   const typeMessage = (message, sessionIndex) => {
     let typedMessage = '';
     const words = message.split(' ');

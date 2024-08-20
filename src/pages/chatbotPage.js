@@ -4,13 +4,11 @@ import '../styles/chatbotPage.css';
 import logo from '../images/OhelAiLogo.jpeg'; // Ensure the path to your image is correct
 
 import { FaUserCircle, FaPaperPlane, FaTimes, FaSpinner} from 'react-icons/fa';//ADDED 7/6/24
-const userEmail = localStorage.getItem('userEmail');
-
-
-console.log(userEmail)
+//const userEmail = localStorage.getItem('userEmail');
+//console.log(userEmail)
 
 function ChatbotPage() {
-
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
   const [isLoading, setIsLoading] = useState(false); //added 7/6/24
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [activeSessionIndex, setActiveSessionIndex] = useState(0);
@@ -223,7 +221,19 @@ function unescapeAndParse(jsonString) {
   
 
 
+  // Listen for changes in local storage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      console.log("Storage changed!");
+      setUserEmail(localStorage.getItem('userEmail')); // Update userEmail when local storage changes
+    };
 
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
 
   const typingIntervalRef = useRef(null);
@@ -282,6 +292,10 @@ function unescapeAndParse(jsonString) {
     };
     fetchChatHistory();
   }, [userEmail]); // Ensure useEffect runs when userEmail changes
+
+  if (!userEmail) {
+    return <div>Loading user information...</div>; // Show a loading screen if userEmail is not yet available
+  }
   
   const typeMessage = (message, sessionIndex) => {
     let typedMessage = '';

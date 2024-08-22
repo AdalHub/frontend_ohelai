@@ -24,6 +24,11 @@ function ChatbotPage() {
   };
 
   const handleSend = async () => {
+    if (!sessions[activeSessionIndex]) {
+      handleAddSession(); // Initialize a new session if none exists
+      return; // Return after initializing to allow state update
+    }
+
     if (userInput.trim()) {
       const userMessage = { id: Date.now(), text: userInput, sender: 'user' };
   
@@ -333,7 +338,7 @@ function unescapeAndParse(jsonString) {
       <div className="drawer-chat-container">
         <div className={`side-drawer ${isDrawerOpen ? 'open' : ''}`} ref={drawerRef}>
           <div className="drawer-title">
-            Chatbot Sessions
+            Sessions
             <button className="add-session-btn" onClick={handleAddSession}>+</button>
           </div>
           <div className="chat-sessions">

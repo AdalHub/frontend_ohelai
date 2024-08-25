@@ -7,7 +7,7 @@ import { FaUserCircle, FaPaperPlane, FaTimes, FaSpinner} from 'react-icons/fa';/
 //const userEmail = localStorage.getItem('userEmail');
 //console.log(userEmail)
 
-function ChatbotPage() {
+function ChatbotPage() { //This is line 10
   const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
   const [isLoading, setIsLoading] = useState(false); //added 7/6/24
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -73,12 +73,12 @@ function ChatbotPage() {
   
 
         // Iterate through each additional key in the response
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach(key => { // this is line 76
           if (key !== 'response') {
               let parsedData;
               if (key === 'elasticsearch_lookup') {
                   // Use the special unescape and parse function for elasticsearch data
-                  parsedData = unescapeAndParse(data[key].output)
+                  parsedData = unescapeAndParse(data[key].output)//this is line 81, elastic search look up error out on the functions unescapedAndParsed
               } else {
                   // Assuming other outputs are regular JSON arrays
                   parsedData = safeJsonParse(data[key].output);
@@ -89,7 +89,7 @@ function ChatbotPage() {
                   
                   toolResponses.forEach(msg => addMessageToSession(msg));
               } else {
-                  console.error('Expected an array after parsing:', parsedData);
+                  console.error('Expected an array after parsing:', parsedData);//tavily searches error out here
                   // Handle cases where parsedData is not an array or is null
                   addMessageToSession({
                       id: Date.now(),
@@ -207,6 +207,11 @@ const safeJsonParse = (str) => {
 };
 // A helper function to unescape and parse JSON strings safely
 function unescapeAndParse(jsonString) {
+  if (!jsonString) {
+    console.error("Invalid JSON string provided:", jsonString);
+    return null;
+}
+
   try {
     console.log("Original JSON String:", jsonString);
     const unescapedString = jsonString.replace(/\\\\/g, '\\');

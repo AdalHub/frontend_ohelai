@@ -65,13 +65,13 @@ function ChatbotPage() { //This is line 10
 
 
 
-
+                
         if (data.response) {
           const botResponse = { id: Date.now(), text: data.response, sender: 'bot' };
           addMessageToSession(botResponse);
         }
   
-
+        /*
         // Iterate through each additional key in the response
         Object.keys(data).forEach(key => { // this is line 76
           if (key !== 'response') {
@@ -99,9 +99,30 @@ function ChatbotPage() { //This is line 10
               }
           }
       });
-  
+      */
+        // Handle Elasticsearch results
+        if (data.elasticsearch_lookup) {
+          const elasticsearchProducts = data.elasticsearch_lookup.map(item => {
+            return formatMessage(item, 'elasticsearch_lookup');
+          });
+          elasticsearchProducts.forEach(msg => addMessageToSession({
+            id: Date.now(),
+            text: msg,
+            sender: 'bot'
+          }));
+        }
 
-
+        // Handle Tavily search results
+        if (data.tavily_search) {
+          const tavilyProducts = data.tavily_search.map(item => {
+            return formatMessage(item, 'tavily_search');
+          });
+          tavilyProducts.forEach(msg => addMessageToSession({
+            id: Date.now(),
+            text: msg,
+            sender: 'bot'
+          }));
+        }
 
 
 
@@ -112,6 +133,23 @@ function ChatbotPage() { //This is line 10
         // Handle error by adding an error message or similar
         setIsLoading(false); // ADDED 7/6/24
       }
+    }
+  };
+  
+  const formatMessage = (item, toolKey) => {
+    if (toolKey === 'elasticsearch_lookup') {
+      return `Title: ${item?.title || 'N/A'}
+  Description: ${item?.description || 'N/A'}
+  Price: ${item?.price || 'N/A'}
+  Rating: ${item?.rating || 'N/A'}
+  URL: <a href="${item?.url || '#'}" target="_blank">View Here</a>
+  Image: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
+    } else {
+      return `Title: ${item?.title || 'N/A'}
+  Description: ${item?.description || 'N/A'}
+  Price: ${item?.price || 'N/A'}
+  URL: <a href="${item?.url || '#'}" target="_blank">View Here</a>
+  Image: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
     }
   };
   
@@ -183,7 +221,7 @@ function ChatbotPage() { //This is line 10
     });
   };
   
-  
+  /*
   const formatToolResponse = (toolData, toolKey) => {
     return toolData.map(item => ({
         id: Date.now() + Math.random(), // Ensure unique ID
@@ -224,7 +262,7 @@ function unescapeAndParse(jsonString) {
     return null;
 }
 
-}
+} */
 
 
 

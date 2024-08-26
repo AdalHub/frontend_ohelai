@@ -106,7 +106,7 @@ function ChatbotPage() { //This is line 10
             return formatMessage(item, 'elasticsearch_lookup');
           });
           elasticsearchProducts.forEach(msg => addMessageToSession({
-            id: Date.now(),
+            id: generateUniqueMessageId(),
             text: msg,
             sender: 'bot'
           }));
@@ -118,7 +118,7 @@ function ChatbotPage() { //This is line 10
             return formatMessage(item, 'tavily_search');
           });
           tavilyProducts.forEach(msg => addMessageToSession({
-            id: Date.now(),
+            id: generateUniqueMessageId(),
             text: msg,
             sender: 'bot'
           }));
@@ -135,7 +135,12 @@ function ChatbotPage() { //This is line 10
       }
     }
   };
+  let messageIdCounter = 0;
+  const generateUniqueMessageId = () => {
+    return Date.now() + (messageIdCounter++);
+  };
   
+
   const formatMessage = (item, toolKey) => {
     if (toolKey === 'elasticsearch_lookup') {
       return `Title: ${item?.title || 'N/A'}

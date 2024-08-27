@@ -1,0 +1,41 @@
+.product-panel {
+    padding: 10px;
+    height: 100%; /* Ensure full height */
+    background-color: #f1f1f1;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Make the panel scrollable */
+    display: flex; /* Setup flex container for products */
+    flex-wrap: wrap; /* Allow wrapping of product items */
+    align-items: flex-start; /* Align items at the start */
+    justify-content: flex-start; /* Align content to start */
+    }
+  
+  .product-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin: 5px; /* Margin around each product icon */
+    border: 1px solid #ccc; /* Border for each product icon */
+  }
+  
+  .product-icon img {
+    width: 100%; /* Full width of the icon container */
+    height: auto;
+  }
+  
+  .product-icon h3, .product-icon p {
+    margin: 2px 0; /* Smaller margin for better spacing */
+    text-align: center; /* Center text for aesthetics */
+  }
+  .product-details-overlay {
+    position: fixed;
+    top: 20%;
+    left: 30%;
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+  }
+  

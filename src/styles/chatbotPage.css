@@ -12,7 +12,22 @@
   position: relative;
 }
 
+.main-container {/* 082524 whole thing */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.chat-and-product-container {/* 082524 whole thing */
+  display: flex;
+  flex-grow: 1; /* Take remaining space */
+}
+.product-panel-container {/* 082524 whole thing */
+  flex-grow: 1;
+  overflow-y: auto;
+}
 .side-drawer {
+  /*flex-shrink: 0; 082524 just this */
   width: 250px;
   height: 100%;
   background-color: #fcfcff;
@@ -28,17 +43,24 @@
 }
 
 .chat-area-container {
-  flex-grow: 1;
+  flex-grow: 1; /* Takes more space than the product panel *//* 082524 just this */
+  /*overflow-x: auto; 082524 just this */
+
   display: flex;
   flex-direction: column;
   padding: 16px;
-  transition: margin-left 0.3s ease-in-out;
-  margin-left: 250px; /* Space for the side drawer */
-}
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  width: calc(100% - 250px); /* Default width when drawer is open */
 
+}
+/* Dynamic margin adjustment when the side drawer is toggled */
+.drawer-chat-container .side-drawer.open ~ .chat-area-container {
+  margin-left: 250px; /* Space for the side drawer when it's open */
+}
 /* Adjustment for when the side drawer is not open */
 .drawer-chat-container .side-drawer:not(.open) ~ .chat-area-container {
   margin-left: 0;
+  width: 100%; /* Full width when drawer is closed */
 }
 
 .messages-container {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
+import ProductPanel from '../components/ProductPanel';
 import '../styles/chatbotPage.css';
 import logo from '../images/OhelAiLogo.jpeg'; // Ensure the path to your image is correct
 
@@ -15,6 +16,8 @@ function ChatbotPage() { //This is line 10
   const [sessions, setSessions] = useState([
     { id: 0, messages: [{ text: "Hello, welcome to your Shopping Assistant, how can I help you?", sender: 'bot' }] }
   ]);
+  const [products, setProducts] = useState([]);
+
 
   const drawerRef = useRef();
   const [userInput, setUserInput] = useState('');
@@ -70,36 +73,23 @@ function ChatbotPage() { //This is line 10
           const botResponse = { id: Date.now(), text: data.response, sender: 'bot' };
           addMessageToSession(botResponse);
         }
+
+        // Inside the handleSend function after fetching data
+        if (data.elasticsearch_lookup) {
+          setProducts(data.elasticsearch_lookup.map(item => ({
+            ...item,
+            source: 'Elasticsearch'
+          })));
+        }
+
+        if (data.tavily_search) {
+          setProducts(products => [...products, ...data.tavily_search.map(item => ({
+            ...item,
+            source: 'Tavily'
+          }))]);
+        }
   
-        /*
-        // Iterate through each additional key in the response
-        Object.keys(data).forEach(key => { // this is line 76
-          if (key !== 'response') {
-              let parsedData;
-              if (key === 'elasticsearch_lookup') {
-                  // Use the special unescape and parse function for elasticsearch data
-                  parsedData = unescapeAndParse(data[key].output)//this is line 81, elastic search look up error out on the functions unescapedAndParsed
-              } else {
-                  // Assuming other outputs are regular JSON arrays
-                  parsedData = safeJsonParse(data[key].output);
-              }
-              
-              if (parsedData && Array.isArray(parsedData)) {
-                  const toolResponses = formatToolResponse(parsedData, key);
-                  
-                  toolResponses.forEach(msg => addMessageToSession(msg));
-              } else {
-                  console.error('Expected an array after parsing:', parsedData);//tavily searches error out here
-                  // Handle cases where parsedData is not an array or is null
-                  addMessageToSession({
-                      id: Date.now(),
-                      text: 'Failed to retrieve valid data',
-                      sender: 'bot'
-                  });
-              }
-          }
-      });
-      */
+/*
         // Handle Elasticsearch results
         if (data.elasticsearch_lookup) {
           const elasticsearchProducts = data.elasticsearch_lookup.map(item => {
@@ -123,7 +113,7 @@ function ChatbotPage() { //This is line 10
             sender: 'bot'
           }));
         }
-
+*/
 
 
 
@@ -225,50 +215,6 @@ function ChatbotPage() { //This is line 10
       return newSessions;
     });
   };
-  
-  /*
-  const formatToolResponse = (toolData, toolKey) => {
-    return toolData.map(item => ({
-        id: Date.now() + Math.random(), // Ensure unique ID
-        text: formatMessage(item, toolKey),
-        sender: 'bot'
-    }));
-};
-
-const formatMessage = (item, toolKey) => {
-    // Here, make sure to access properties in a null-safe manner
-    return `Title: ${item?.title || 'N/A'}\nDescription: ${item?.description || 'N/A'}\nPrice: ${item?.price || 'N/A'}\nURL: <a href="${item?.url || '#'}" target="_blank">View Here</a>\nImage: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
-  };
-// Helper function to safely parse JSON
-const safeJsonParse = (str) => {
-  try {
-    return JSON.parse(str);
-  } catch (e) {
-    console.error('Failed to parse JSON:', e);
-    return null;
-  }
-};
-// A helper function to unescape and parse JSON strings safely
-function unescapeAndParse(jsonString) {
-  if (!jsonString) {
-    console.error("Invalid JSON string provided:", jsonString);
-    return null;
-}
-
-  try {
-    console.log("Original JSON String:", jsonString);
-    const unescapedString = jsonString.replace(/\\\\/g, '\\');
-    console.log("Unescaped JSON String:", unescapedString);
-    const parsedData = JSON.parse(unescapedString);
-    console.log("Parsed Data:", parsedData);
-    return parsedData;
-} catch (error) {
-    console.error('Error parsing JSON:', error, 'from string:', jsonString);
-    return null;
-}
-
-} */
-
 
 
   
@@ -383,7 +329,7 @@ function unescapeAndParse(jsonString) {
   return (
     <div className="chatbot-page">
       <Header />
-      <div className="drawer-chat-container">
+      <div className="main-container">
         <div className={`side-drawer ${isDrawerOpen ? 'open' : ''}`} ref={drawerRef}>
           <div className="drawer-title">
             Sessions
@@ -399,49 +345,51 @@ function unescapeAndParse(jsonString) {
                 <span>Session {session.id + 1}</span>
                 <button
                   className="delete-session-btn"
-                  onClick={(event) => handleDeleteSession(index, event)} //added 7/6/24
-                  > 
-                    <FaTimes />
+                  onClick={(event) => handleDeleteSession(index, event)}
+                >
+                  <FaTimes />
                 </button>
               </div>
             ))}
           </div>
         </div>
-        <div className="chat-area-container">
-          <h2 className="chat-title">OhelAI, your Smart and Safe Shopping Guru Media!</h2>
-          <div className="messages-container">
-            {sessions[activeSessionIndex]?.messages.map((message, index) => (
-              <div key={index} className="message-row">
-                {message.sender === 'bot' ? (
-                  <img src={logo} alt="Bot Logo" className="bot-icon icon-spacing" />
-                ) : (
-                  <FaUserCircle className="user-icon icon-spacing" />
-                )}
-                <div className={`message-bubble ${message.sender}`}>
-                  <div className="message" dangerouslySetInnerHTML={{ __html: message.text }}></div>
+        <div className="chat-and-product-container">
+          <div className="chat-area-container" style={{ marginLeft: isDrawerOpen ? '250px' : '0', width: isDrawerOpen ? 'calc(100% - 250px)' : '100%' }}>
+            <h2 className="chat-title">OhelAI, your Smart and Safe Shopping Guru Media!</h2>
+            <div className="messages-container">
+              {sessions[activeSessionIndex]?.messages.map((message, index) => (
+                <div key={index} className="message-row">
+                  {message.sender === 'bot' ? (
+                    <img src={logo} alt="Bot Logo" className="bot-icon icon-spacing" />
+                  ) : (
+                    <FaUserCircle className="user-icon icon-spacing" />
+                  )}
+                  <div className={`message-bubble ${message.sender}`}>
+                    <div className="message" dangerouslySetInnerHTML={{ __html: message.text }}></div>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="message-row">
-                <FaSpinner className="spinner" />
-              </div>
-            )}
+              ))}
+              {isLoading && (
+                <div className="message-row">
+                  <FaSpinner className="spinner" />
+                </div>
+              )}
+            </div>
+            <div className="input-area">
+              <textarea
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                placeholder="Type a message..."
+                onKeyPress={handleKeyPress}
+                rows={1}
+                style={{ resize: 'none' }}
+              />
+              <button className="send-btn" onClick={handleSend}>
+                <FaPaperPlane size="1.5em" />
+              </button>
+            </div>
           </div>
-
-          <div className="input-area">
-            <textarea
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Type a message..."
-              onKeyPress={handleKeyPress}
-              rows={1}
-              style={{ resize: 'none' }}
-            />
-            <button className="send-btn" onClick={handleSend}>
-              <FaPaperPlane size="1.5em" />
-            </button>
-          </div>
+          <ProductPanel products={products} />
         </div>
         <button
           className={`toggle-btn ${isDrawerOpen ? 'button-shift' : ''}`}

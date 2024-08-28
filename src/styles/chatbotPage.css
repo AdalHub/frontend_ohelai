@@ -14,7 +14,7 @@
 
 .main-container {/* 082524 whole thing */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100vh;
 }
 

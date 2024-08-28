@@ -89,35 +89,7 @@ function ChatbotPage() { //This is line 10
           }))]);
         }
   
-/*
-        // Handle Elasticsearch results
-        if (data.elasticsearch_lookup) {
-          const elasticsearchProducts = data.elasticsearch_lookup.map(item => {
-            return formatMessage(item, 'elasticsearch_lookup');
-          });
-          elasticsearchProducts.forEach(msg => addMessageToSession({
-            id: generateUniqueMessageId(),
-            text: msg,
-            sender: 'bot'
-          }));
-        }
-
-        // Handle Tavily search results
-        if (data.tavily_search) {
-          const tavilyProducts = data.tavily_search.map(item => {
-            return formatMessage(item, 'tavily_search');
-          });
-          tavilyProducts.forEach(msg => addMessageToSession({
-            id: generateUniqueMessageId(),
-            text: msg,
-            sender: 'bot'
-          }));
-        }
-*/
-
-
-
-    
+        
       } catch (error) {
         console.error('Error:', error);
         // Handle error by adding an error message or similar

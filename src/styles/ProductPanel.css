@@ -1,13 +1,14 @@
 .product-panel {
-    padding: 10px;
-    height: 100%; /* Ensure full height */
+    padding: 40px;
+    max-height: calc(100vh - 100px); /* Limit height to avoid expanding the website size */
     background-color: #f1f1f1;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
     overflow-y: auto; /* Make the panel scrollable */
+    flex-grow: 1;
     display: flex; /* Setup flex container for products */
-    flex-wrap: wrap; /* Allow wrapping of product items */
+    flex-direction: column; /* Stack children vertically */
+
     align-items: flex-start; /* Align items at the start */
-    justify-content: flex-start; /* Align content to start */
     }
   
   .product-icon {
@@ -19,6 +20,8 @@
     border-bottom: 1px solid #ccc;
     margin: 5px; /* Margin around each product icon */
     border: 1px solid #ccc; /* Border for each product icon */
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+
   }
   
   .product-icon img {

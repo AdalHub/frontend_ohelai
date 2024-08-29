@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import ProductPanel from '../components/ProductPanel';
+import VideoPanel from '../components/VideoPanel';
 import '../styles/chatbotPage.css';
 import logo from '../images/OhelAiLogo.jpeg'; // Ensure the path to your image is correct
 
@@ -18,6 +19,7 @@ function ChatbotPage() { //This is line 10
   ]);
   const [products, setProducts] = useState([]);
 
+  const [videoIDs, setVideoIDs] = useState([]);
 
   const drawerRef = useRef();
   const [userInput, setUserInput] = useState('');
@@ -88,7 +90,10 @@ function ChatbotPage() { //This is line 10
             source: 'Tavily'
           }))]);
         }
-  
+        if (data.youtube_search) {
+          setVideoIDs(data.youtube_search); // Save the YouTube video IDs
+        }
+    
         
       } catch (error) {
         console.error('Error:', error);
@@ -97,6 +102,9 @@ function ChatbotPage() { //This is line 10
       }
     }
   };
+
+
+  /*
   let messageIdCounter = 0;
   const generateUniqueMessageId = () => {
     return Date.now() + (messageIdCounter++);
@@ -119,7 +127,8 @@ function ChatbotPage() { //This is line 10
   Image: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
     }
   };
-  
+  */
+
 
   const handleAddSession = () => {
     const newSessionId = sessions.length;
@@ -360,8 +369,10 @@ function ChatbotPage() { //This is line 10
                 <FaPaperPlane size="1.5em" />
               </button>
             </div>
+            
           </div>
           <ProductPanel products={products} />
+          <VideoPanel videoIDs = {videoIDs}/>
         </div>
         <button
           className={`toggle-btn ${isDrawerOpen ? 'button-shift' : ''}`}

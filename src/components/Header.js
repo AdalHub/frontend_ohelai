@@ -12,6 +12,8 @@ const Header = () => {
     navigate('/landing'); // Navigate to the landing page route
   };
 
+  const handleShopRagclick = () =>{navigate("/chatbot");}
+
   const handleLogout = () => {
     // Remove the token from local storage or any state management library you are using
     localStorage.removeItem('token');
@@ -31,12 +33,13 @@ const Header = () => {
         OhelAI
       </div> 
       <div className="nav-links">
-        <Link to="/chatbot" className="nav-link">OhelAI</Link>
+        <button onClick={handleShopRagclick} className ="nav-link">ShopRAG</button>
         {/* <Link to="/shop" className="nav-link">Shop</Link> */}
         {/* <Link to="/about-us" className="nav-link">About Us</Link>
         <Link to="/contacts" className="nav-link">Contacts</Link> */}
+        <button onClick={handleLogout} className="nav-link">Logout</button> 
+
       </div>
-      <button onClick={handleLogout} className="logout-btn">Logout</button> 
     </nav>
   );
 };

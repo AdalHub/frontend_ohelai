@@ -35,6 +35,8 @@
   text-decoration: none;
   padding: 10px 20px; /* Increased padding for a more prominent button */
   background-color: #036C9C;
+  border: none;
+  margin-left: 15px;
   font-size: 1rem;
   border-radius: 10px; /* Slightly rounded corners */
   margin-right: 15px; /* Adjusted margin to space out the buttons */
@@ -57,10 +59,12 @@
 .logout-btn {
   background-color: #036C9C; /* Green background for the logout button */
   color: #ffffff; /* White text for logout button */
+  text-decoration: none;
   border: none;
   padding: 10px 20px; /* Increased padding for a more prominent button */
   cursor: pointer;
-  border-radius: 10px; /* Slightly rounded corners */
+  border-radius: 10px;/* Slightly rounded corners */
+  margin-right: 15px;  
   font-size: 1rem;
   margin-left: 15px; /* Add margin to the left of the logout button */
   box-shadow: 0 5px #014564, 0 10px 20px rgba(0, 0, 0, 0.2); /* 3D effect with shadow */

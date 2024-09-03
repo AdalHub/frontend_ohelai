@@ -34,6 +34,7 @@ function AppContent() {
         <Route path="/signup" element={<SignupPage />} />
         {/* Add more routes as needed */}
       </Routes>
+      <title>TrustShop</title>
     </>
   );
 }

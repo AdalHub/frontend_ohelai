@@ -132,6 +132,12 @@
     display: flex;
     align-items: center;
   }
+
+  .password-criteria{
+    color: #FF0000; /* Red text color */
+    font-weight: bold; /* Make the text bold */
+
+  }
   
   input[type="password"], input[type="text"] {
     padding-right: 45px; /* Adjust to avoid overlap with icon */

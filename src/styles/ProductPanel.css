@@ -1,5 +1,5 @@
 .product-panel {
-    padding: 40px;
+    padding: 20px;
     max-height: calc(100vh - 100px); /* Limit height to avoid expanding the website size */
     background-color: #f1f1f1;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
@@ -7,8 +7,10 @@
     flex-grow: 1;
     display: flex; /* Setup flex container for products */
     flex-direction: column; /* Stack children vertically */
-
+    border-radius: 10px;
     align-items: flex-start; /* Align items at the start */
+    gap: 20px; /* Add space between items */
+    
     }
   
   .product-icon {
@@ -16,21 +18,64 @@
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #ccc;
-    margin: 5px; /* Margin around each product icon */
-    border: 1px solid #ccc; /* Border for each product icon */
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    margin: 5px 20px; /* Margin around each product icon */
+    /*border: 5px solid #ccc;  Border for each product icon */
     box-sizing: border-box; /* Include padding and border in the width calculation */
+    font-size: 14px;
+    max-height: 260px;
+    width: 225px;
+    font-family: Arial, sans-serif;
+    color: #007185;
+    justify-content: space-between; /* This will space out the children elements */
+
+    object-fit: contain;
+  }
+
+
+  .icon-text{
+    max-height: 80px;
+    max-width: 100%;
+    object-fit: contain;
+    margin-top: 10px;
+    overflow:scroll;
+    overflow: hidden;  
+    text-overflow: ellipsis;  
+
 
   }
-  
+
+  .icon-price{
+    height: 20px;
+    width: 100%;
+    object-fit: contain;
+    margin-top: 5px;;
+    text-align: center;
+  }
+
+  .product-icon:hover{
+    text-decoration: underline;
+    color: #B12704;
+  }
+  .product-icon div:first-child {
+    width: 225px;  /* Ensure the image takes the full width of its container */
+    height: 160px;
+    justify-content: center;
+    align-items: center;
+    object-fit: contain; /* Ensure the image is scaled correctly within the container without cropping */
+  }
+
   .product-icon img {
-    width: 100%; /* Full width of the icon container */
-    height: auto;
+    width: 100%;  /* Ensure the image takes the full width of its container */
+    height: 160px; /* Set height to 100% to fill the container */
+    
+    
   }
   
   .product-icon h3, .product-icon p {
-    margin: 2px 0; /* Smaller margin for better spacing */
+   /* margin: 2px 0; Smaller margin for better spacing */
     text-align: center; /* Center text for aesthetics */
   }
   .product-details-overlay {

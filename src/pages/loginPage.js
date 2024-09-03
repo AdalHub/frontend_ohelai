@@ -36,8 +36,11 @@ const LoginPage = () => {
         alert('Login failed. Please check your credentials.');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      alert(error.response?.data?.message || 'An error occurred during login.');
+      if (error.response && error.response.status === 404) {
+        alert('User does not exist. Please sign up.');
+      } else {
+        alert(error.response?.data?.message || 'An error occurred during login.');
+      }
     }
   };
 

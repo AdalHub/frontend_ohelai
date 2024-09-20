@@ -28,6 +28,23 @@ function ChatbotPage() { //This is line 10
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+
+
+  // Enhanced useEffect with console logs
+  useEffect(() => {
+    console.log('Switching sessions: clearing products and videos');
+    setProducts([]);  // Clear products array
+    setVideoIDs([]);  // Clear video IDs array
+  }, [activeSessionIndex]);  // Depend on activeSessionIndex
+
+  // Additional log to track current state
+  useEffect(() => {
+    console.log('Current Session Index:', activeSessionIndex);
+    console.log('Current Products:', products);
+    console.log('Current Videos:', videoIDs);
+  }, [activeSessionIndex, products, videoIDs]);
+
+
   const handleSend = async () => {
     if (!sessions[activeSessionIndex]) {
       handleAddSession(); // Initialize a new session if none exists
@@ -72,9 +89,9 @@ function ChatbotPage() { //This is line 10
 
                 
         if (data.response) {
-          const botResponse = { id: Date.now(), text: data.response, sender: 'bot' };
-          addMessageToSession(botResponse);
+          typeMessage(data.response, activeSessionIndex);
         }
+        
 
         // Inside the handleSend function after fetching data
         if (data.elasticsearch_lookup) {
@@ -134,7 +151,7 @@ function ChatbotPage() { //This is line 10
     const newSessionId = sessions.length;
     const newSessions = [
       ...sessions,
-      { id: newSessionId, messages: [{ text: '', sender: 'bot' }] }, // Start with an empty message
+      { id: newSessionId, messages: [] }, // Start with an empty messages array
     ];
     setSessions(newSessions);
     setActiveSessionIndex(newSessionId);
@@ -144,6 +161,7 @@ function ChatbotPage() { //This is line 10
       typeMessage("Hello, welcome to your Shopping Assistant, how can I help you?", newSessionId);
     }, 0);
   };
+  
   
   const handleDeleteSession = async (sessionIndex, event) => {
     event.stopPropagation();
@@ -198,6 +216,16 @@ function ChatbotPage() { //This is line 10
   };
 
 
+
+
+
+  useEffect(() => {
+    return () => {
+      // Cleanup intervals when component unmounts
+      Object.values(typingIntervalRef.current).forEach(clearInterval);
+    };
+  }, []);
+  
   
 
 
@@ -216,7 +244,7 @@ function ChatbotPage() { //This is line 10
   }, []);
 
 
-  const typingIntervalRef = useRef(null);
+  const typingIntervalRef = useRef({});
 
   useEffect(() => {
     console.log("Using react effects");
@@ -278,22 +306,42 @@ function ChatbotPage() { //This is line 10
   }
   
   const typeMessage = (message, sessionIndex) => {
+    const messageId = Date.now() + Math.random(); // Ensure unique ID
+  
+    // Add a new message with empty text
+    setSessions((currentSessions) => {
+      const newSessions = currentSessions.map((session, idx) => {
+        if (idx === sessionIndex) {
+          const newMessages = [...session.messages];
+          newMessages.push({ id: messageId, text: '', sender: 'bot' });
+          return { ...session, messages: newMessages };
+        }
+        return session;
+      });
+      return newSessions;
+    });
+  
     let typedMessage = '';
     const words = message.split(' ');
     let index = 0;
   
-    if (typingIntervalRef.current) {
-      clearInterval(typingIntervalRef.current);
+    // Clear any existing interval for this message
+    if (typingIntervalRef.current[messageId]) {
+      clearInterval(typingIntervalRef.current[messageId]);
     }
   
-    typingIntervalRef.current = setInterval(() => {
+    typingIntervalRef.current[messageId] = setInterval(() => {
       if (index < words.length) {
         typedMessage += words[index] + ' ';
         setSessions((currentSessions) => {
           const newSessions = currentSessions.map((session, idx) => {
             if (idx === sessionIndex) {
-              const newMessages = [...session.messages];
-              newMessages[0] = { ...newMessages[0], text: typedMessage.trim() };
+              const newMessages = session.messages.map(msg => {
+                if (msg.id === messageId) {
+                  return { ...msg, text: typedMessage.trim() };
+                }
+                return msg;
+              });
               return { ...session, messages: newMessages };
             }
             return session;
@@ -302,12 +350,12 @@ function ChatbotPage() { //This is line 10
         });
         index++;
       } else {
-        clearInterval(typingIntervalRef.current);
+        clearInterval(typingIntervalRef.current[messageId]);
+        delete typingIntervalRef.current[messageId];
       }
-    }, 200);
+    }, 24);
   };
-
-  return (
+    return (
     <div className="chatbot-page">
       <Header />
       <div className="main-container">

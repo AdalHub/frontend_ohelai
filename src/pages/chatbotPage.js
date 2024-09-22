@@ -6,6 +6,7 @@ import '../styles/chatbotPage.css';
 import logo from '../images/OhelAiLogo.jpeg'; // Ensure the path to your image is correct
 
 import { FaUserCircle, FaPaperPlane, FaTimes, FaSpinner} from 'react-icons/fa';//ADDED 7/6/24
+
 //const userEmail = localStorage.getItem('userEmail');
 //console.log(userEmail)
 
@@ -35,14 +36,11 @@ function ChatbotPage() { //This is line 10
     console.log('Switching sessions: clearing products and videos');
     setProducts([]);  // Clear products array
     setVideoIDs([]);  // Clear video IDs array
-  }, [activeSessionIndex]);  // Depend on activeSessionIndex
-
-  // Additional log to track current state
-  useEffect(() => {
     console.log('Current Session Index:', activeSessionIndex);
     console.log('Current Products:', products);
     console.log('Current Videos:', videoIDs);
-  }, [activeSessionIndex, products, videoIDs]);
+  }, [activeSessionIndex]);  // Depend on activeSessionIndex
+
 
 
   const handleSend = async () => {
@@ -50,7 +48,7 @@ function ChatbotPage() { //This is line 10
       handleAddSession(); // Initialize a new session if none exists
       return; // Return after initializing to allow state update
     }
-
+  
     if (userInput.trim()) {
       const userMessage = { id: Date.now(), text: userInput, sender: 'user' };
   
@@ -59,13 +57,16 @@ function ChatbotPage() { //This is line 10
         if (!newSessions[activeSessionIndex].messages.find(msg => msg.id === userMessage.id)) {
           const newMessages = [...newSessions[activeSessionIndex].messages, userMessage];
           newSessions[activeSessionIndex] = { ...newSessions[activeSessionIndex], messages: newMessages };
-        }//add the opposite of this if saying sorry message repeat
+        } // Add logic to handle duplicate messages if needed
         return newSessions;
       });
   
       setUserInput(''); // Clear input after sending
-      setIsLoading(true);  // Start loading ADDED 7/6/24
+      setIsLoading(true);  // Start loading
+      let itemCollector;
+  
       try {
+        // First fetch to get initial data
         const response = await fetch('https://api.ohel.ai/chatbot', {
           method: 'POST',
           headers: {
@@ -73,53 +74,101 @@ function ChatbotPage() { //This is line 10
           },
           body: JSON.stringify({ query: userInput, email: userEmail, session: activeSessionIndex }),
         });
-
-        setIsLoading(false); //ADDED 7/6/24
+  
+        setIsLoading(false); // Stop loading
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
   
         const data = await response.json();
+  
         console.log('API response:', data); // Log to inspect the structure
-
-
-
-
-
-                
+  
+        if (data.elasticsearch_lookup || data.tavily_search) {
+          itemCollector = data;
+        }
+  
         if (data.response) {
           typeMessage(data.response, activeSessionIndex);
         }
-        
-
-        // Inside the handleSend function after fetching data
-        if (data.elasticsearch_lookup) {
-          setProducts(data.elasticsearch_lookup.map(item => ({
-            ...item,
-            source: 'Elasticsearch'
-          })));
-        }
-
-        if (data.tavily_search) {
-          setProducts(products => [...products, ...data.tavily_search.map(item => ({
-            ...item,
-            source: 'Tavily'
-          }))]);
-        }
+  
         if (data.youtube_search) {
           setVideoIDs(data.youtube_search); // Save the YouTube video IDs
         }
-    
-        
       } catch (error) {
         console.error('Error:', error);
         // Handle error by adding an error message or similar
-        setIsLoading(false); // ADDED 7/6/24
+        setIsLoading(false);
+      }
+  
+      try {
+        if (itemCollector) {
+          console.log('Item Collector:', itemCollector);
+          const res= itemCollector.response;
+          const ela= itemCollector.elasticsearch_lookup;
+          const tav= itemCollector.tavily_search;
+
+          // Second fetch to process and filter the search results
+          const processResponse = await fetch('https://api.ohel.ai/process_search_results', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              response: res,
+              elasticsearch_results: ela,
+              tavily_results: tav,
+            }),
+          });
+  
+          const data2 = await processResponse.json();
+          console.log('API response:', data2);
+          
+          // Extract relevant indices
+          const relevantElasticIndices = data2.response?.relevant_elastic || [];
+          const relevantTavilyIndices = data2.response?.relevant_tavily || [];
+          console.log('Relevant Elastic Indices:', relevantElasticIndices);
+          console.log('Relevant Tavily Indices:', relevantTavilyIndices);
+
+          // Filter products based on relevant indices
+          const relevantElasticProducts = relevantElasticIndices.map(index => {
+            const items = itemCollector.elasticsearch_lookup || [];
+            const item = items[index];
+            if (item) {
+              return {
+                ...item,
+                source: 'Elasticsearch'
+              };
+            }
+            return null; // Or handle accordingly
+          }).filter(item => item !== null);
+          
+          const relevantTavilyProducts = relevantTavilyIndices.map(index => {
+            const items = itemCollector.tavily_search || [];
+            const item = items[index];
+            if (item) {
+              return {
+                ...item,
+                source: 'Tavily'
+              };
+            }
+            return null; // Or handle accordingly
+          }).filter(item => item !== null);
+          
+  
+          // Update the products state with only the relevant products
+          setProducts([...relevantElasticProducts, ...relevantTavilyProducts]);
+          console.log('Updated Products State:', [...relevantElasticProducts, ...relevantTavilyProducts]);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle error by adding an error message or similar
+        setIsLoading(false);
       }
     }
   };
-
+  
 
   /*
   let messageIdCounter = 0;
@@ -434,3 +483,4 @@ function ChatbotPage() { //This is line 10
 }
 
 export default ChatbotPage;
+

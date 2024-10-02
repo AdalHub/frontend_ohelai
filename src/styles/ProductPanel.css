@@ -1,39 +1,48 @@
 .product-panel {
-    padding: 20px;
-    max-height: calc(100vh - 100px); /* Limit height to avoid expanding the website size */
-    background-color: #f1f1f1;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* Make the panel scrollable */
-    flex-grow: 1;
-    display: flex; /* Setup flex container for products */
-    flex-direction: column; /* Stack children vertically */
-    border-radius: 10px;
-    align-items: flex-start; /* Align items at the start */
-    gap: 20px; /* Add space between items */
-    
-    }
-  
-  .product-icon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    padding: 15px;
-    border-bottom: 1px solid #ccc;
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-    margin: 5px 20px; /* Margin around each product icon */
-    /*border: 5px solid #ccc;  Border for each product icon */
-    box-sizing: border-box; /* Include padding and border in the width calculation */
-    font-size: 14px;
-    max-height: 260px;
-    width: 225px;
-    font-family: Arial, sans-serif;
-    color: #007185;
-    justify-content: space-between; /* This will space out the children elements */
+  padding: 0px 10px;
+  max-height: calc(100vh - 100px);
+  background-color: #f1f1f1;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  border-radius: 10px;
+}
 
-    object-fit: contain;
-  }
+.product-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 15px 10px;
+  border-bottom: 1px solid #ccc;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+  margin: 0;
+  box-sizing: border-box;
+  font-size: 14px;
+  max-height: 260px;
+  width: 225px;
+  font-family: Arial, sans-serif;
+  color: #007185;
+  justify-content: space-between;
+  object-fit: contain;
+}
 
+
+/* Additional styles to ensure text takes up available space if no image is present */
+/* Additional styles to ensure text takes up available space if no image is present */
+/* Additional styles to ensure text takes up available space if no image is present */
+.product-icon.no-image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  height: 200px; /* Fixed height when no image */
+}
 
   .icon-text{
     max-height: 80px;

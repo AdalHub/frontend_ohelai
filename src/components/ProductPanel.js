@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 
 function ProductPanel({ products }) {
     const [selectedProduct, setSelectedProduct] = useState(null);
-  
+
     return (
         <div className="product-panel" style={{ height: 'calc(100vh - 100px)' }}>
         {products.map((product, index) => (
-          <div key={index} className="product-icon" onClick={() => setSelectedProduct(product)}>
-            <div><img src={product.image || 'https://placehold.it/150'} alt="Product" /></div>
+          <div key={index} className={`product-icon ${!product.image ? 'no-image' : ''}`} onClick={() => setSelectedProduct(product)}>
+            {product.image && <img src={product.image} alt="Product" />}
             <div><p className="icon-text">{product.title}</p></div>
             <div><p className="icon-price">${product.price}</p></div>
           </div>
+
         ))}
         {selectedProduct && (
           
@@ -32,4 +33,3 @@ function ProductPanel({ products }) {
   }
   
   export default ProductPanel;
-  

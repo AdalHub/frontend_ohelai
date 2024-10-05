@@ -29,7 +29,12 @@ function ChatbotPage() { //This is line 10
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-
+  useEffect(() => {
+    if (sessions.length === 0) {
+      handleAddSession();
+    }
+  }, [sessions.length]);
+  
 
   // Enhanced useEffect with console logs
   useEffect(() => {
@@ -44,9 +49,13 @@ function ChatbotPage() { //This is line 10
 
 
   const handleSend = async () => {
-    if (!sessions[activeSessionIndex]) {
-      handleAddSession(); // Initialize a new session if none exists
-      return; // Return after initializing to allow state update
+    if (activeSessionIndex === -1 || !sessions[activeSessionIndex]) {
+      handleAddSession();
+      // Wait for the session to be added before proceeding
+      setTimeout(() => {
+        handleSend(); // Retry sending the message
+      }, 100);
+      return;
     }
   
     if (userInput.trim()) {
@@ -195,7 +204,7 @@ function ChatbotPage() { //This is line 10
   };
   */
 
-
+/*
   const handleAddSession = () => {
     const newSessionId = sessions.length;
     const newSessions = [
@@ -206,6 +215,18 @@ function ChatbotPage() { //This is line 10
     setActiveSessionIndex(newSessionId);
     
     // Set a timeout to allow state update before starting to type
+    setTimeout(() => {
+      typeMessage("Hello, welcome to your Shopping Assistant, how can I help you?", newSessionId);
+    }, 0);
+  };
+  */
+  const handleAddSession = () => {
+    const newSessionId = sessions.length > 0 ? Math.max(...sessions.map(s => s.id)) + 1 : 0;
+    const newSession = { id: newSessionId, messages: [] };
+    setSessions(prevSessions => [...prevSessions, newSession]);
+    setActiveSessionIndex(sessions.length); // Set to the new session's index
+  
+    // Automatically type the welcome message
     setTimeout(() => {
       typeMessage("Hello, welcome to your Shopping Assistant, how can I help you?", newSessionId);
     }, 0);

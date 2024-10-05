@@ -18,19 +18,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* Ensures content is centered vertically */
   cursor: pointer;
   padding: 15px 10px;
-  border-bottom: 1px solid #ccc;
+  border: 1px solid #ccc; /* Updated to see borders clearly */
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-  margin: 0;
   box-sizing: border-box;
   font-size: 14px;
-  max-height: 260px;
+  height: 260px; /* Fixed height to prevent layout shifts */
   width: 225px;
   font-family: Arial, sans-serif;
   color: #007185;
-  justify-content: space-between;
-  object-fit: contain;
+  background: #fff; /* Ensure background is white */
+}
+
+.product-icon img {
+  max-width: 100%;  /* Limit image width */
+  max-height: 160px; /* Limit image height */
+  object-fit: contain; /* Ensures the image fits well without stretching */
+  margin-bottom: 10px; /* Adds space below the image */
+}
+
+.icon-text, .icon-price {
+  width: 100%; /* Take full width to center the text */
+  text-align: center; /* Center-align the text */
 }
 
 
@@ -56,12 +67,10 @@
 
   }
 
-  .icon-price{
-    height: 20px;
-    width: 100%;
-    object-fit: contain;
-    margin-top: 5px;;
-    text-align: center;
+/* Adjust .icon-price to make sure it stays within the boundaries */
+  .icon-price {
+    position: relative;
+    bottom: 10px; /* Adjust position to stay within the container */
   }
 
   .product-icon:hover{
@@ -76,12 +85,7 @@
     object-fit: contain; /* Ensure the image is scaled correctly within the container without cropping */
   }
 
-  .product-icon img {
-    width: 100%;  /* Ensure the image takes the full width of its container */
-    height: 160px; /* Set height to 100% to fill the container */
-    
-    
-  }
+ 
   
   .product-icon h3, .product-icon p {
    /* margin: 2px 0; Smaller margin for better spacing */

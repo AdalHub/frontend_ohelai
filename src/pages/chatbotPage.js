@@ -16,7 +16,7 @@ function ChatbotPage() { //This is line 10
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [activeSessionIndex, setActiveSessionIndex] = useState(0);
   const [sessions, setSessions] = useState([
-    { id: 0, messages: [{ text: "Hello, welcome to your Shopping Assistant, how can I help you?", sender: 'bot' }] }
+    { id: 0, messages: [] } // Initialize with an empty messages array
   ]);
   const [products, setProducts] = useState([]);
 
@@ -226,10 +226,7 @@ function ChatbotPage() { //This is line 10
     setSessions(prevSessions => [...prevSessions, newSession]);
     setActiveSessionIndex(sessions.length); // Set to the new session's index
   
-    // Automatically type the welcome message
-    setTimeout(() => {
-      typeMessage("Hello, welcome to your Shopping Assistant, how can I help you?", newSessionId);
-    }, 0);
+    
   };
   
   
@@ -453,39 +450,56 @@ function ChatbotPage() { //This is line 10
           </div>
         </div>
         <div className="chat-and-product-container">
-          <div className="chat-area-container" style={{ marginLeft: isDrawerOpen ? '250px' : '0', width: isDrawerOpen ? 'calc(100% - 250px)' : '100%' }}>
+        <div
+          className={`chat-area-container ${sessions[activeSessionIndex]?.messages.length > 0 ? 'with-messages' : ''}`}
+          style={{
+            marginLeft: isDrawerOpen ? '250px' : '0',
+            width: isDrawerOpen ? 'calc(100% - 250px)' : '100%',
+          }}
+        >
             <h2 className="chat-title">OhelAI, your Smart and Safe Shopping Guru Media!</h2>
-            <div className="messages-container">
-              {sessions[activeSessionIndex]?.messages.map((message, index) => (
-                <div key={index} className="message-row">
-                  {message.sender === 'bot' ? (
-                    <img src={logo} alt="Bot Logo" className="bot-icon icon-spacing" />
-                  ) : (
-                    <FaUserCircle className="user-icon icon-spacing" />
-                  )}
-                  <div className={`message-bubble ${message.sender}`}>
-                    <div className="message" dangerouslySetInnerHTML={{ __html: message.text }}></div>
+            {/* Only render the messages area if there are messages */}
+            {sessions[activeSessionIndex]?.messages.length > 0 && (
+                <div className="messages-area">
+                  <div className="messages-container">
+                    {sessions[activeSessionIndex]?.messages.map((message, index) => (
+                      <div key={index} className="message-row">
+                        {message.sender === 'bot' ? (
+                          <img src={logo} alt="Bot Logo" className="bot-icon icon-spacing" />
+                        ) : (
+                          <FaUserCircle className="user-icon icon-spacing" />
+                        )}
+                        <div className={`message-bubble ${message.sender}`}>
+                          <div
+                            className="message"
+                            dangerouslySetInnerHTML={{ __html: message.text }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                    {isLoading && (
+                      <div className="message-row">
+                        <FaSpinner className="spinner" />
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))}
-              {isLoading && (
-                <div className="message-row">
-                  <FaSpinner className="spinner" />
-                </div>
               )}
-            </div>
-            <div className="input-area">
-              <textarea
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Type a message..."
-                onKeyPress={handleKeyPress}
-                rows={1}
-                style={{ resize: 'none' }}
-              />
-              <button className="send-btn" onClick={handleSend}>
-                <FaPaperPlane size="1.5em" />
-              </button>
+            
+            <div className="input-area-middle">
+              <div className="input-area">
+                <textarea
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="Type a message..."
+                  onKeyPress={handleKeyPress}
+                  rows={1}
+                  style={{ resize: 'none' }}
+                />
+                <button className="send-btn" onClick={handleSend}>
+                  <FaPaperPlane size="1.5em" />
+                </button>
+              </div>
             </div>
             
           </div>

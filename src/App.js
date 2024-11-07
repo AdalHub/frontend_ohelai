@@ -6,7 +6,10 @@ import LandingPage from './pages/landingPage';
 import ChatbotPage from './pages/chatbotPage';
 import LoginPage from './pages/loginPage';
 import SignupPage from './pages/signupPage';
-import LoadingAnimation from './components/LoadingAnimation'; 
+import LoadingAnimation from './components/LoadingAnimation';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+
 
 
 function AppContent() {
@@ -32,6 +35,9 @@ function AppContent() {
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/chatbot" element={<ChatbotPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+
         {/* Add more routes as needed */}
       </Routes>
       <title>TrustShop</title>

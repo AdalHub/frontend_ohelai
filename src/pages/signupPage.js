@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/signupPage.css'; 
 import axios from 'axios';
 import Logo from '../images/OhelAiLogo.jpeg'; 
+import { Link } from 'react-router-dom'; // Add this line
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -193,7 +194,8 @@ const SignupPage = () => {
   
         <div className="terms-container">
           <input type="checkbox" id="terms" name="terms" required />
-          <label htmlFor="terms"> I agree with the Terms and Privacy Policy.</label>
+          <label htmlFor="terms">By using this service, you agree to our <Link to="/terms">Terms of Service</Link> and acknowledge our <Link to="/privacy">Privacy Policy</Link>.
+          </label>
         </div>
   
         <button type="submit">Sign Up</button>

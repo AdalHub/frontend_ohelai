@@ -1,4 +1,5 @@
 //landingPage.js
+import { Link } from 'react-router-dom'; // Add this line
 
 import React from 'react';
 import '../styles/landingPage.css';
@@ -50,6 +51,8 @@ function LandingPage() {
           <a href="/faq" className="footer-link">FAQs</a>
           <a href="/support" className="footer-link">Customer Support</a>
           <a href="/contact" className="footer-link">Contact Us</a>
+          <Link to="/terms" className="footer-link">Terms of Service</Link>
+          <Link to="/privacy" className="footer-link">Privacy Policy</Link>
         </div>
       </footer>
 

@@ -190,3 +190,17 @@ body, html {
   background-color: #007bff; /* Blue background on hover for consistency */
 }
 
+/* Styles for links with the class "highlighted-link" */
+.highlighted-link {
+  color: #007185;               /* Sets the text color to blue */
+  background-color: yellow;  /* Highlights the link with a yellow background */
+  text-decoration: none;     /* Removes the default underline */
+  padding: 2px 4px;          /* Adds some padding around the text */
+  border-radius: 4px;        /* Rounds the corners of the background */
+}
+
+/* Optional: Change appearance on hover */
+.highlighted-link:hover {
+  background-color: lightblue; /* Changes background color on hover */
+  text-decoration: underline;  /* Underlines text on hover */
+}

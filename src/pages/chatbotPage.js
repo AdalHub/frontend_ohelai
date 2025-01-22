@@ -513,8 +513,23 @@ function ChatbotPage() { //This is line 10
           {isDrawerOpen ? '<' : '>'}
         </button>
       </div>
+      
+      <footer className="footer-nav">
+        <div className="footer-links">
+          <a href="/faq" className="footer-link">FAQs</a>
+          <a href="/support" className="footer-link">Customer Support</a>
+          <a href="/contact" className="footer-link">Contact Us</a>
+          <Link to="/terms" className="footer-link">Terms of Service</Link>
+          <Link to="/privacy" className="footer-link">Privacy Policy</Link>
+        </div>
+      </footer>
     </div>
+
+
+
   );
+
+  
 }
 
 export default ChatbotPage;

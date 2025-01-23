@@ -4,6 +4,7 @@ import ProductPanel from '../components/ProductPanel';
 import VideoPanel from '../components/VideoPanel';
 import '../styles/chatbotPage.css';
 import logo from '../images/OhelAiLogo.jpeg'; // Ensure the path to your image is correct
+import { Link } from 'react-router-dom'; // Add this line
 
 import { FaUserCircle, FaPaperPlane, FaTimes, FaSpinner} from 'react-icons/fa';//ADDED 7/6/24
 

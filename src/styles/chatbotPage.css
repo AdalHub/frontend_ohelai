@@ -1,9 +1,10 @@
 /* chatbotPage.css */
 
-.chatbot-page {
+.chatbot-page { /*012325 +min-height: 100vh; -height: 100vh*/
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  
+  min-height: 100vh;
 }
 
 .drawer-chat-container {
@@ -12,10 +13,10 @@
   position: relative;
 }
 
-.main-container {/* 082524 whole thing */
+.main-container {/* 082524 whole thing, 012325 +flex. - height: 100vh;*/
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  flex: 1;
 }
 
 .chat-and-product-container {/* 082524 whole thing */
@@ -354,4 +355,35 @@ button {
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
+}
+
+
+/* Footer Navigation */
+.footer-nav {
+  width: 100%;
+  padding: 20px 40px;
+  background-color: #ffffff; /* White background for consistency with the header */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #eaeaea; /* Subtle line to distinguish the footer */
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px; /* Adjust the gap to match the header links if necessary */
+}
+
+.footer-link {
+  color: #333333; /* Same color as the header link for consistency */
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 5px 10px;
+  border-radius: 5px; /* Same as the header link border-radius */
+  transition: color 0.2s ease-in-out; /* Smooth transition for hover effects */
+}
+
+.footer-link:hover, .footer-link:focus {
+  color: #ffffff; /* White text on hover to match the header link hover state */
+  background-color: #007bff; /* Blue background on hover for consistency */
 }

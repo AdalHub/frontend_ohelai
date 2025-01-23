@@ -22,6 +22,9 @@
 .chat-and-product-container {/* 082524 whole thing */
   display: flex;
   flex-grow: 1; /* Take remaining space */
+  min-height: 0;
+  height: 100%;        /* ensures it matches the chat container's full height */
+
 }
 .product-panel-container {/* 082524 whole thing */
   flex-grow: 1;
@@ -53,6 +56,9 @@
   transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
   width: calc(100% - 250px); /* Default width when drawer is open */
 
+  min-height: 0;
+  height: 100%;
+
 }
 /* Dynamic margin adjustment when the side drawer is toggled */
 .drawer-chat-container .side-drawer.open ~ .chat-area-container {
@@ -66,7 +72,9 @@
 
 .messages-container {
   overflow-y: auto;
-  flex-grow: 1;
+  max-height: 400px;      /* or any px/%, e.g. 50vh */
+  overflow-y: auto;
+
   background: #ffffff; /* White background like input area */
   border: 2px solid #e0e0e0; /* Border like input area */
   border-radius: 15px; /* Rounded corners like input area */

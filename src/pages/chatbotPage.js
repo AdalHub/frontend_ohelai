@@ -8,8 +8,7 @@ import { Link } from 'react-router-dom'; // Add this line
 
 import { FaUserCircle, FaPaperPlane, FaTimes, FaSpinner} from 'react-icons/fa';//ADDED 7/6/24
 
-//const userEmail = localStorage.getItem('userEmail');
-//console.log(userEmail)
+
 
 function ChatbotPage() { //This is line 10
   const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'));
@@ -17,7 +16,7 @@ function ChatbotPage() { //This is line 10
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [activeSessionIndex, setActiveSessionIndex] = useState(0);
   const [sessions, setSessions] = useState([
-    { id: 0, messages: [] } // Initialize with an empty messages array
+    { id: 0, name: '',messages: [] } // Initialize with an empty messages array
   ]);
   const [products, setProducts] = useState([]);
 
@@ -74,7 +73,10 @@ function ChatbotPage() { //This is line 10
       setUserInput(''); // Clear input after sending
       setIsLoading(true);  // Start loading
       let itemCollector;
-  
+          // Check if this is the first message in the current session
+      const isFirstMessage =
+        sessions[activeSessionIndex]?.messages.length === 0;
+
       try {
         // First fetch to get initial data
         const response = await fetch('https://api.ohel.ai/chatbot', {
@@ -82,7 +84,7 @@ function ChatbotPage() { //This is line 10
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ query: userInput, email: userEmail, session: activeSessionIndex }),
+          body: JSON.stringify({ query: userInput, email: userEmail, session: activeSessionIndex, is_first_message: isFirstMessage }),
         });
   
         setIsLoading(false); // Stop loading
@@ -94,7 +96,24 @@ function ChatbotPage() { //This is line 10
         const data = await response.json();
   
         console.log('API response:', data); // Log to inspect the structure
-  
+        
+        // If the backend returns a session name, store it locally
+        if (data.chatName) {
+          // Force to string if it’s an object
+          const chatNameString = typeof data.chatName === 'string'
+            ? data.chatName
+            : JSON.stringify(data.chatName);
+        
+          setSessions((prevSessions) => {
+            const updated = [...prevSessions];
+            updated[activeSessionIndex] = {
+              ...updated[activeSessionIndex],
+              name: chatNameString
+            };
+            return updated;
+          });
+        }
+
         if (data.elasticsearch_lookup || data.tavily_search) {
           itemCollector = data;
         }
@@ -180,47 +199,6 @@ function ChatbotPage() { //This is line 10
   };
   
 
-  /*
-  let messageIdCounter = 0;
-  const generateUniqueMessageId = () => {
-    return Date.now() + (messageIdCounter++);
-  };
-  
-
-  const formatMessage = (item, toolKey) => {
-    if (toolKey === 'elasticsearch_lookup') {
-      return `Title: ${item?.title || 'N/A'}
-  Description: ${item?.description || 'N/A'}
-  Price: ${item?.price || 'N/A'}
-  Rating: ${item?.rating || 'N/A'}
-  URL: <a href="${item?.url || '#'}" target="_blank">View Here</a>
-  Image: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
-    } else {
-      return `Title: ${item?.title || 'N/A'}
-  Description: ${item?.description || 'N/A'}
-  Price: ${item?.price || 'N/A'}
-  URL: <a href="${item?.url || '#'}" target="_blank">View Here</a>
-  Image: <img src="${item?.image || 'https://placehold.it/150'}" alt="Product Image" style="max-width:100%;height:auto;">`;
-    }
-  };
-  */
-
-/*
-  const handleAddSession = () => {
-    const newSessionId = sessions.length;
-    const newSessions = [
-      ...sessions,
-      { id: newSessionId, messages: [] }, // Start with an empty messages array
-    ];
-    setSessions(newSessions);
-    setActiveSessionIndex(newSessionId);
-    
-    // Set a timeout to allow state update before starting to type
-    setTimeout(() => {
-      typeMessage("Hello, welcome to your Shopping Assistant, how can I help you?", newSessionId);
-    }, 0);
-  };
-  */
   const handleAddSession = () => {
     const newSessionId = sessions.length > 0 ? Math.max(...sessions.map(s => s.id)) + 1 : 0;
     const newSession = { id: newSessionId, messages: [] };
@@ -345,9 +323,16 @@ function ChatbotPage() { //This is line 10
           if (!acc[sessionIndex]) {
             acc[sessionIndex] = {
               id: sessionIndex,
+              name: chat.name || '',        // <--- Retrieve the name from DB
               messages: []
             };
           }
+          // If the DB stores name on every record, you can do a last-write-wins or first-write-wins
+          // to set 'name' if it's blank:
+          if (!acc[sessionIndex].name && chat.name) {
+            acc[sessionIndex].name = chat.name;
+          }
+
           acc[sessionIndex].messages.push({ text: chat.user, sender: 'user' });
           acc[sessionIndex].messages.push({ text: chat.assistant, sender: 'bot' });
           return acc;
@@ -423,7 +408,7 @@ function ChatbotPage() { //This is line 10
       }
     }, 24);
   };
-    return (
+  return (
     <div className="chatbot-page">
       <Header />
       <div className="main-container">
@@ -439,7 +424,9 @@ function ChatbotPage() { //This is line 10
                 className={`chat-session ${index === activeSessionIndex ? 'active' : ''}`}
                 onClick={() => switchSession(index)}
               >
-                <span>Session {session.id + 1}</span>
+                <span>
+                  {session.name ? session.name : `Session ${session.id + 1}`}
+                </span>
                 <button
                   className="delete-session-btn"
                   onClick={(event) => handleDeleteSession(index, event)}
@@ -450,17 +437,29 @@ function ChatbotPage() { //This is line 10
             ))}
           </div>
         </div>
+  
         <div className="chat-and-product-container">
-        <div
-          className={`chat-area-container ${sessions[activeSessionIndex]?.messages.length > 0 ? 'with-messages' : ''}`}
-          style={{
-            marginLeft: isDrawerOpen ? '250px' : '0',
-            width: isDrawerOpen ? 'calc(100% - 250px)' : '100%',
-          }}
-        >
-            <h2 className="chat-title">OhelAI, your Smart and Safe Shopping Guru Media!</h2>
-            {/* Only render the messages area if there are messages */}
-            {sessions[activeSessionIndex]?.messages.length > 0 && (
+          <div
+            className={`chat-area-container ${sessions[activeSessionIndex]?.messages.length > 0 ? 'with-messages' : ''}`}
+            style={{
+              marginLeft: isDrawerOpen ? '250px' : '0',
+              width: isDrawerOpen ? 'calc(100% - 250px)' : '100%',
+            }}
+          >
+            {/*
+              New wrapper: conditionally adds
+              'with-messages' or 'no-messages'
+            */}
+            <div
+              className={`header-and-messages-wrapper ${
+                sessions[activeSessionIndex]?.messages.length > 0
+                  ? 'with-messages'
+                  : 'no-messages'
+              }`}
+            >
+              <h2 className="chat-title">OhelAI, your Smart and Safe Shopping Guru Media!</h2>
+              {/* Only render the messages area if there are messages */}
+              {sessions[activeSessionIndex]?.messages.length > 0 && (
                 <div className="messages-area">
                   <div className="messages-container">
                     {sessions[activeSessionIndex]?.messages.map((message, index) => (
@@ -486,7 +485,8 @@ function ChatbotPage() { //This is line 10
                   </div>
                 </div>
               )}
-            
+            </div> {/* <-- Properly closed here instead of <div/> */}
+  
             <div className="input-area-middle">
               <div className="input-area">
                 <textarea
@@ -502,11 +502,12 @@ function ChatbotPage() { //This is line 10
                 </button>
               </div>
             </div>
-            
           </div>
+  
           <ProductPanel products={products} />
-          <VideoPanel videoIDs = {videoIDs}/>
+          <VideoPanel videoIDs={videoIDs} />
         </div>
+  
         <button
           className={`toggle-btn ${isDrawerOpen ? 'button-shift' : ''}`}
           onClick={toggleDrawer}
@@ -525,11 +526,8 @@ function ChatbotPage() { //This is line 10
         </div>
       </footer>
     </div>
-
-
-
   );
-
+  
   
 }
 

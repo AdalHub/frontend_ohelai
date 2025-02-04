@@ -395,3 +395,43 @@ button {
   color: #ffffff; /* White text on hover to match the header link hover state */
   background-color: #007bff; /* Blue background on hover for consistency */
 }
+
+
+
+/* 
+  =================================================
+    NEW ANIMATION CLASSES FOR SMOOTH TRANSITION
+  =================================================
+*/
+
+.header-and-messages-wrapper {
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+/* If there are NO messages, hide the .messages-area smoothly */
+.header-and-messages-wrapper.no-messages .messages-area {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+
+/* If there ARE messages, collapse/fade out the title 
+   and expand/fade in the .messages-area
+*/
+.header-and-messages-wrapper.with-messages .chat-title {
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+
+.header-and-messages-wrapper.with-messages .messages-area {
+  max-height: 600px; /* enough space for your messages */
+  opacity: 1;
+  overflow: auto;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+}
